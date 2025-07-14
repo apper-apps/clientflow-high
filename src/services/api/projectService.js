@@ -86,7 +86,7 @@ export const createProject = async (projectData) => {
 
 // Only include Updateable fields
     const recordData = {
-      Name: projectData.Name || projectData.name,
+      Name: projectData.Name,
       status: projectData.status || "planning",
       budget: projectData.budget ? parseFloat(projectData.budget) : 0,
       startDate: projectData.startDate,
@@ -144,7 +144,7 @@ export const updateProject = async (id, projectData) => {
 // Only include Updateable fields
     const recordData = {
       Id: parseInt(id),
-      Name: projectData.Name || projectData.name,
+      Name: projectData.Name,
       status: projectData.status,
       budget: projectData.budget ? parseFloat(projectData.budget) : 0,
       startDate: projectData.startDate,

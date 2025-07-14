@@ -86,8 +86,9 @@ const getClientName = (clientId) => {
     return client ? client.Name : `Client ID: ${clientId}`;
   };
 
-  const filteredProjects = projects.filter(project => {
-    const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase());
+const filteredProjects = projects.filter(project => {
+    const projectName = project.Name || project.name || '';
+    const matchesSearch = projectName.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || project.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -221,9 +222,9 @@ actionLabel="Create Project"
           >
             <Card hover className="p-6 h-full">
               <div className="flex items-start justify-between mb-4">
-                <div className="flex-1 min-w-0">
+<div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 dark:text-white truncate mb-1">
-                    {project.name}
+                    {project.Name || project.name}
                   </h3>
 <p className="text-sm text-gray-600 dark:text-gray-400">
                     {getClientName(project.client_id)}

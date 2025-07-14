@@ -15,7 +15,7 @@ const ProjectModal = ({
   clients = []
 }) => {
 const [formData, setFormData] = useState({
-    name: '',
+    Name: '',
     description: '',
     client_id: '',
     status: 'planning',
@@ -28,10 +28,10 @@ const [loading, setLoading] = useState(false);
 
 
 // Populate form when editing existing project
-  useEffect(() => {
+useEffect(() => {
     if (project) {
       setFormData({
-        name: project.Name || project.name || '',
+        Name: project.Name || project.name || '',
         description: project.description || '',
         client_id: project.client_id || project.clientId || '',
         status: project.status || 'planning',
@@ -39,9 +39,9 @@ const [loading, setLoading] = useState(false);
         startDate: project.startDate || '',
         endDate: project.endDate || ''
       });
-} else {
+    } else {
       setFormData({
-        name: '',
+        Name: '',
         description: '',
         client_id: '',
         status: 'planning',
@@ -71,13 +71,13 @@ const [loading, setLoading] = useState(false);
   };
 
   const validateForm = () => {
-    const newErrors = {};
+const newErrors = {};
 
-    if (!formData.name.trim()) {
-      newErrors.name = 'Project name is required';
+    if (!formData.Name.trim()) {
+      newErrors.Name = 'Project name is required';
     }
 
-if (!formData.client_id) {
+    if (!formData.client_id) {
       newErrors.client_id = 'Client selection is required';
     }
 
@@ -108,7 +108,7 @@ const handleSubmit = async (e) => {
       setLoading(true);
       
 const projectData = {
-        Name: formData.name,
+        Name: formData.Name,
         status: formData.status,
         budget: formData.budget ? parseFloat(formData.budget) : null,
         startDate: formData.startDate,
@@ -116,7 +116,7 @@ const projectData = {
         client_id: formData.client_id ? parseInt(formData.client_id) : null
       };
 
-await onSubmit(projectData);
+      await onSubmit(projectData);
       onClose();
     } catch (error) {
       console.error('Failed to save project:', error);
@@ -152,13 +152,13 @@ const getClientName = (clientId) => {
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Project Name *
           </label>
-          <Input
-            name="name"
+<Input
+            name="Name"
             type="text"
-            value={formData.name}
+            value={formData.Name}
             onChange={handleInputChange}
             placeholder="Enter project name"
-            error={errors.name}
+            error={errors.Name}
             required
           />
         </div>

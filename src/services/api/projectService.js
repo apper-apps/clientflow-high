@@ -86,13 +86,12 @@ export const createProject = async (projectData) => {
 
 // Only include Updateable fields
     const recordData = {
-      Name: projectData.name || projectData.Name,
+      Name: projectData.Name || projectData.name,
       status: projectData.status || "planning",
       budget: projectData.budget ? parseFloat(projectData.budget) : 0,
       startDate: projectData.startDate,
       endDate: projectData.endDate,
-      client_id: projectData.clientId ? parseInt(projectData.clientId) : 
-                 projectData.client_id ? parseInt(projectData.client_id) : null,
+      client_id: projectData.client_id ? parseInt(projectData.client_id) : null,
       Tags: projectData.Tags || ""
     };
 
@@ -145,13 +144,12 @@ export const updateProject = async (id, projectData) => {
 // Only include Updateable fields
     const recordData = {
       Id: parseInt(id),
-      Name: projectData.name || projectData.Name,
+      Name: projectData.Name || projectData.name,
       status: projectData.status,
       budget: projectData.budget ? parseFloat(projectData.budget) : 0,
       startDate: projectData.startDate,
       endDate: projectData.endDate,
-      client_id: projectData.clientId ? parseInt(projectData.clientId) : 
-                 projectData.client_id ? parseInt(projectData.client_id) : null,
+      client_id: projectData.client_id ? parseInt(projectData.client_id) : null,
       Tags: projectData.Tags || ""
     };
 

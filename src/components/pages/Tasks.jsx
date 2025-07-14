@@ -179,12 +179,12 @@ const getStatusIcon = (status) => {
 
   if (tasks.length === 0) {
     return (
-      <Empty
+<Empty
         title="No Tasks Yet"
         description="Create your first task to start tracking your work"
         icon="CheckSquare"
         actionLabel="Add Task"
-        onAction={() => toast.info("Add task functionality coming soon!")}
+        onAction={handleCreateTask}
       />
     );
   }

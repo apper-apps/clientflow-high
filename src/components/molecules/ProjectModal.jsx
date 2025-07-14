@@ -116,11 +116,12 @@ const projectData = {
         client_id: formData.client_id ? parseInt(formData.client_id) : null
       };
 
-      await onSubmit(projectData);
+await onSubmit(projectData);
       onClose();
     } catch (error) {
       console.error('Failed to save project:', error);
-      // Let parent handle error toasts
+      // Error handling - show user feedback
+      toast.error(error.message || 'Failed to save project. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -303,7 +304,7 @@ const getClientName = (clientId) => {
           >
             Cancel
           </Button>
-          <Button
+<Button
             type="submit"
             loading={loading}
             disabled={loading}

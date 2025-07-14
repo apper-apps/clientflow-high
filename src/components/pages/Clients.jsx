@@ -20,6 +20,9 @@ const Clients = () => {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [editingClient, setEditingClient] = useState(null);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  
   const loadClients = async () => {
     try {
       setLoading(true);
@@ -34,9 +37,40 @@ const Clients = () => {
     }
 };
 
-  const handleClientCreated = (newClient) => {
+const handleClientCreated = (newClient) => {
     setClients(prev => [...prev, newClient]);
-};
+  };
+
+  const handleClientUpdated = (updatedClient) => {
+    setClients(prev => prev.map(client => 
+      client.Id === updatedClient.Id ? updatedClient : client
+    ));
+  };
+
+  const handleEditClient = (client) => {
+    setEditingClient(client);
+    setShowModal(true);
+    setOpenDropdown(null);
+  };
+
+  const handleDeleteClient = async (clientId) => {
+    if (window.confirm('Are you sure you want to delete this client? This action cannot be undone.')) {
+      try {
+        const { deleteClient } = await import('@/services/api/clientService');
+        await deleteClient(clientId);
+        setClients(prev => prev.filter(client => client.Id !== clientId));
+        toast.success('Client deleted successfully');
+      } catch (error) {
+        toast.error('Failed to delete client');
+      }
+    }
+    setOpenDropdown(null);
+  };
+
+  const handleMenuToggle = (clientId, event) => {
+    event.stopPropagation();
+    setOpenDropdown(openDropdown === clientId ? null : clientId);
+  };
 
   const handleClientClick = (clientId) => {
     navigate(`/clients/${clientId}`);
@@ -46,6 +80,16 @@ const Clients = () => {
     loadClients();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setOpenDropdown(null);
+    };
+
+    if (openDropdown) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [openDropdown]);
 const filteredClients = clients.filter(client =>
     (client.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
     (client.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
@@ -155,8 +199,8 @@ const filteredClients = clients.filter(client =>
               onClick={() => handleClientClick(client.Id)}
               className="cursor-pointer"
             >
-              <Card hover className="p-6 h-full transition-all duration-200 hover:shadow-lg">
-<div className="flex items-start justify-between mb-4">
+<Card hover className="p-6 h-full transition-all duration-200 hover:shadow-lg">
+                <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white font-semibold shadow-lg">
                       {client.Name.charAt(0).toUpperCase()}
@@ -171,9 +215,11 @@ const filteredClients = clients.filter(client =>
                     </div>
                   </div>
                   
-                  <Badge variant={client.status === "active" ? "success" : "secondary"}>
-                    {client.status}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={client.status === "active" ? "success" : "secondary"}>
+                      {client.status}
+                    </Badge>
+                  </div>
                 </div>
                 
                 <div className="space-y-3">
@@ -201,7 +247,7 @@ const filteredClients = clients.filter(client =>
                     Contact
                   </Button>
                   
-                  <div className="flex items-center gap-2">
+<div className="flex items-center gap-2">
                     <Button 
                       variant="ghost" 
                       size="sm"
@@ -212,13 +258,42 @@ const filteredClients = clients.filter(client =>
                     >
                       <ApperIcon name="Eye" size={14} />
                     </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <ApperIcon name="MoreHorizontal" size={16} />
-                    </Button>
+                    <div className="relative">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={(e) => handleMenuToggle(client.Id, e)}
+                      >
+                        <ApperIcon name="MoreHorizontal" size={16} />
+                      </Button>
+                      
+                      {openDropdown === client.Id && (
+                        <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                          <div className="py-1">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditClient(client);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                            >
+                              <ApperIcon name="Edit" size={14} />
+                              Edit Client
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteClient(client.Id);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                            >
+                              <ApperIcon name="Trash2" size={14} />
+                              Delete Client
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -244,10 +319,15 @@ const filteredClients = clients.filter(client =>
       )}
 
       {/* Client Modal */}
-      <ClientModal
+<ClientModal
         isOpen={showModal}
-        onClose={() => setShowModal(false)}
+        onClose={() => {
+          setShowModal(false);
+          setEditingClient(null);
+        }}
         onClientCreated={handleClientCreated}
+        onClientUpdated={handleClientUpdated}
+        client={editingClient}
       />
     </div>
   );

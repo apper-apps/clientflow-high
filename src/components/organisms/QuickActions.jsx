@@ -1,19 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Card from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
+import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
-import ProjectModal from "@/components/molecules/ProjectModal";
-import ClientModal from "@/components/molecules/ClientModal";
+import Button from "@/components/atoms/Button";
+import Card from "@/components/atoms/Card";
 import InvoiceModal from "@/components/molecules/InvoiceModal";
+import ClientModal from "@/components/molecules/ClientModal";
+import ProjectModal from "@/components/molecules/ProjectModal";
+import { getAllClients } from "@/services/api/clientService";
+
 const QuickActions = () => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [clients, setClients] = useState([]);
+  const [loadingClients, setLoadingClients] = useState(false);
 
-  const handleProjectSubmit = async (projectData) => {
+  const loadClients = async () => {
+    try {
+      setLoadingClients(true);
+      const clientData = await getAllClients();
+      setClients(clientData);
+    } catch (error) {
+      console.error("Failed to load clients:", error);
+      toast.error("Failed to load clients. Please try again.");
+    } finally {
+      setLoadingClients(false);
+    }
+  };
+
+  useEffect(() => {
+    loadClients();
+  }, []);
+
+const handleProjectSubmit = async (projectData) => {
     // Modal handles the submission and toast notifications
     setIsProjectModalOpen(false);
+    // Reload clients in case a new client was referenced
+    await loadClients();
   };
 
   const handleClientCreated = (newClient) => {
@@ -26,9 +50,13 @@ const QuickActions = () => {
     setIsInvoiceModalOpen(false);
   };
 
-  const handleActionClick = (actionTitle) => {
+const handleActionClick = async (actionTitle) => {
     switch (actionTitle) {
       case "New Project":
+        // Ensure clients are loaded before opening modal
+        if (clients.length === 0 && !loadingClients) {
+          await loadClients();
+        }
         setIsProjectModalOpen(true);
         break;
       case "Add Client":
@@ -129,10 +157,11 @@ const QuickActions = () => {
 </div>
       </div>
       
-      <ProjectModal
+<ProjectModal
         isOpen={isProjectModalOpen}
         onClose={() => setIsProjectModalOpen(false)}
         onSubmit={handleProjectSubmit}
+        clients={clients}
       />
       
       <ClientModal

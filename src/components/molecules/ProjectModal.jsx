@@ -118,7 +118,7 @@ const ProjectModal = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -129,17 +129,19 @@ const ProjectModal = ({
       setLoading(true);
       
       const projectData = {
-        ...formData,
+        Name: formData.name,
+        status: formData.status,
         budget: formData.budget ? parseFloat(formData.budget) : null,
-        id: project?.id
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        client_id: formData.clientId ? parseInt(formData.clientId) : null
       };
 
       await onSubmit(projectData);
       onClose();
-      toast.success(project ? 'Project updated successfully' : 'Project created successfully');
     } catch (error) {
       console.error('Failed to save project:', error);
-      toast.error(error.message || 'Failed to save project');
+      // Let parent handle error toasts
     } finally {
       setLoading(false);
     }

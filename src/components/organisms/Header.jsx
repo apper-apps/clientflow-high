@@ -1,22 +1,15 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { useSelector } from "react-redux";
 import Button from "@/components/atoms/Button";
 import ThemeToggle from "@/components/molecules/ThemeToggle";
 import ApperIcon from "@/components/ApperIcon";
 import { useSidebar } from "@/hooks/useSidebar";
-import ProjectModal from "@/components/molecules/ProjectModal";
 import { AuthContext } from "@/App";
 
 const Header = () => {
 const { toggleSidebar } = useSidebar();
   const { logout } = useContext(AuthContext);
   const { user } = useSelector((state) => state.user);
-  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
-
-  const handleProjectSubmit = async (projectData) => {
-    // Modal handles the submission and toast notifications
-    setIsProjectModalOpen(false);
-  };
 
   const handleLogout = async () => {
     try {
@@ -55,15 +48,6 @@ const { toggleSidebar } = useSidebar();
           
           <ThemeToggle />
           
-          <Button 
-            variant="primary" 
-            size="sm" 
-            className="hidden sm:flex"
-            onClick={() => setIsProjectModalOpen(true)}
-          >
-            <ApperIcon name="Plus" size={16} className="mr-2" />
-            New Project
-          </Button>
 
           {user && (
             <div className="flex items-center gap-3">
@@ -84,11 +68,6 @@ const { toggleSidebar } = useSidebar();
         </div>
       </div>
       
-      <ProjectModal
-        isOpen={isProjectModalOpen}
-        onClose={() => setIsProjectModalOpen(false)}
-        onSubmit={handleProjectSubmit}
-      />
     </header>
   );
 };

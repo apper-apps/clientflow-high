@@ -166,9 +166,9 @@ const ClientDetail = () => {
             </h2>
             
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
+<div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white font-semibold shadow-lg">
-                  {client.name.charAt(0).toUpperCase()}
+                  {client.name?.charAt(0)?.toUpperCase() || 'C'}
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white">

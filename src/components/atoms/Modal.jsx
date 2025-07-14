@@ -56,9 +56,11 @@ const Modal = ({
           </button>
         </div>
         
-        {/* Content */}
-        <div className="p-6">
-          {children}
+{/* Content */}
+        <div className="max-h-[calc(100vh-8rem)] overflow-y-auto">
+          <div className="p-6">
+            {children}
+          </div>
         </div>
       </motion.div>
     </div>

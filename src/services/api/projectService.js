@@ -92,6 +92,7 @@ export const createProject = async (projectData) => {
       startDate: projectData.startDate,
       endDate: projectData.endDate,
       client_id: projectData.client_id ? parseInt(projectData.client_id) : null,
+      Owner: projectData.Owner ? parseInt(projectData.Owner) : null,
       Tags: projectData.Tags || ""
     };
 
@@ -150,6 +151,7 @@ export const updateProject = async (id, projectData) => {
       startDate: projectData.startDate,
       endDate: projectData.endDate,
       client_id: projectData.client_id ? parseInt(projectData.client_id) : null,
+      Owner: projectData.Owner ? parseInt(projectData.Owner) : null,
       Tags: projectData.Tags || ""
     };
 

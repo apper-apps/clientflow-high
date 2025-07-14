@@ -18,6 +18,7 @@ const [formData, setFormData] = useState({
     Name: '',
     description: '',
     client_id: '',
+    Owner: '',
     status: 'planning',
     budget: '',
     startDate: '',
@@ -34,6 +35,7 @@ useEffect(() => {
         Name: project.Name || project.name || '',
         description: project.description || '',
         client_id: project.client_id || project.clientId || '',
+        Owner: project.Owner || '',
         status: project.status || 'planning',
         budget: project.budget || '',
         startDate: project.startDate || '',
@@ -44,6 +46,7 @@ useEffect(() => {
         Name: '',
         description: '',
         client_id: '',
+        Owner: '',
         status: 'planning',
         budget: '',
         startDate: '',
@@ -81,6 +84,10 @@ const newErrors = {};
       newErrors.client_id = 'Client selection is required';
     }
 
+    if (!formData.Owner) {
+      newErrors.Owner = 'Owner selection is required';
+    }
+
     if (formData.budget && isNaN(parseFloat(formData.budget))) {
       newErrors.budget = 'Budget must be a valid number';
     }
@@ -113,7 +120,8 @@ const projectData = {
         budget: formData.budget ? parseFloat(formData.budget) : null,
         startDate: formData.startDate,
         endDate: formData.endDate,
-        client_id: formData.client_id ? parseInt(formData.client_id) : null
+        client_id: formData.client_id ? parseInt(formData.client_id) : null,
+        Owner: formData.Owner ? parseInt(formData.Owner) : null
       };
 
       await onSubmit(projectData);
@@ -209,6 +217,37 @@ const getClientName = (clientId) => {
           )}
 {errors.client_id && (
             <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.client_id}</p>
+          )}
+        </div>
+
+        {/* Owner Selection */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Owner *
+          </label>
+          {clients.length === 0 ? (
+            <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-12 rounded-lg"></div>
+          ) : (
+            <select
+              name="Owner"
+              value={formData.Owner}
+              onChange={handleInputChange}
+              className={`w-full px-4 py-3 border rounded-lg 
+                        focus:ring-2 focus:ring-primary-500 focus:border-transparent
+                        bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                        ${errors.Owner ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+              required
+            >
+              <option value="">Choose an owner...</option>
+              {clients.map(client => (
+                <option key={client.Id} value={client.Id}>
+                  {client.Name}
+                </option>
+              ))}
+            </select>
+          )}
+          {errors.Owner && (
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.Owner}</p>
           )}
         </div>
 

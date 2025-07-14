@@ -93,8 +93,14 @@ const [activeTimers, setActiveTimers] = useState(new Map());
     }
 };
 
-  const handleCreateTask = async () => {
-    setShowTaskModal(true);
+const handleCreateTask = async () => {
+    try {
+      setShowTaskModal(true);
+      toast.success("Opening task creation form...");
+    } catch (error) {
+      console.error("Error opening task modal:", error);
+      toast.error("Failed to open task creation form");
+    }
   };
 
   const handleTaskCreated = async () => {

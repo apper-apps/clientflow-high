@@ -11,47 +11,39 @@ const ProjectModal = ({
   onClose, 
   onSubmit, 
   project = null,
-  title = "Create New Project"
+  title = "Create New Project",
+  clients = []
 }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     name: '',
     description: '',
-    clientId: '',
+    client_id: '',
     status: 'planning',
     budget: '',
     startDate: '',
     endDate: ''
   });
-  
-  const [clients, setClients] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [loadingClients, setLoadingClients] = useState(false);
+const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Load clients when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      loadClients();
-    }
-  }, [isOpen]);
 
-  // Populate form when editing existing project
+// Populate form when editing existing project
   useEffect(() => {
     if (project) {
       setFormData({
-        name: project.name || '',
+        name: project.Name || project.name || '',
         description: project.description || '',
-        clientId: project.clientId || '',
+        client_id: project.client_id || project.clientId || '',
         status: project.status || 'planning',
         budget: project.budget || '',
         startDate: project.startDate || '',
         endDate: project.endDate || ''
       });
-    } else {
+} else {
       setFormData({
         name: '',
         description: '',
-        clientId: '',
+        client_id: '',
         status: 'planning',
         budget: '',
         startDate: '',
@@ -61,19 +53,6 @@ const ProjectModal = ({
     setErrors({});
   }, [project]);
 
-  const loadClients = async () => {
-    try {
-      setLoadingClients(true);
-      const clientsData = await getAllClients();
-      setClients(clientsData || []);
-    } catch (error) {
-      console.error('Failed to load clients:', error);
-      toast.error('Failed to load clients');
-      setClients([]);
-    } finally {
-      setLoadingClients(false);
-    }
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -98,8 +77,8 @@ const ProjectModal = ({
       newErrors.name = 'Project name is required';
     }
 
-    if (!formData.clientId) {
-      newErrors.clientId = 'Client selection is required';
+if (!formData.client_id) {
+      newErrors.client_id = 'Client selection is required';
     }
 
     if (formData.budget && isNaN(parseFloat(formData.budget))) {
@@ -128,13 +107,13 @@ const handleSubmit = async (e) => {
     try {
       setLoading(true);
       
-      const projectData = {
+const projectData = {
         Name: formData.name,
         status: formData.status,
         budget: formData.budget ? parseFloat(formData.budget) : null,
         startDate: formData.startDate,
         endDate: formData.endDate,
-        client_id: formData.clientId ? parseInt(formData.clientId) : null
+        client_id: formData.client_id ? parseInt(formData.client_id) : null
       };
 
       await onSubmit(projectData);
@@ -156,7 +135,7 @@ const handleSubmit = async (e) => {
 
 const getClientName = (clientId) => {
     const client = clients.find(c => c.Id === parseInt(clientId));
-    return client ? client.name : 'Unknown Client';
+    return client ? client.Name : 'Unknown Client';
   };
 
   return (
@@ -201,34 +180,34 @@ const getClientName = (clientId) => {
           />
         </div>
 
-        {/* Client Selection */}
+{/* Client Selection */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Client *
           </label>
-          {loadingClients ? (
+          {clients.length === 0 ? (
             <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-12 rounded-lg"></div>
           ) : (
-            <select
-              name="clientId"
-              value={formData.clientId}
+<select
+              name="client_id"
+              value={formData.client_id}
               onChange={handleInputChange}
               className={`w-full px-4 py-3 border rounded-lg 
                         focus:ring-2 focus:ring-primary-500 focus:border-transparent
                         bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                        ${errors.clientId ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                        ${errors.client_id ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
               required
             >
-<option value="">Select a client</option>
+<option value="">Choose a client...</option>
               {clients.map(client => (
                 <option key={client.Id} value={client.Id}>
-                  {client.name}
+                  {client.Name}
                 </option>
               ))}
             </select>
           )}
-          {errors.clientId && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.clientId}</p>
+{errors.client_id && (
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.client_id}</p>
           )}
         </div>
 
@@ -304,13 +283,13 @@ const getClientName = (clientId) => {
           </div>
         </div>
 
-        {/* Preview Selected Client */}
-        {formData.clientId && (
+{/* Preview Selected Client */}
+        {formData.client_id && (
           <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Selected Client
             </h4>
-            <p className="text-gray-900 dark:text-white">{getClientName(formData.clientId)}</p>
+            <p className="text-gray-900 dark:text-white">{getClientName(formData.client_id)}</p>
           </div>
         )}
 

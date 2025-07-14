@@ -84,14 +84,15 @@ export const createProject = async (projectData) => {
       apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
     });
 
-    // Only include Updateable fields
+// Only include Updateable fields
     const recordData = {
       Name: projectData.name || projectData.Name,
       status: projectData.status || "planning",
-      budget: parseFloat(projectData.budget) || 0,
+      budget: projectData.budget ? parseFloat(projectData.budget) : 0,
       startDate: projectData.startDate,
       endDate: projectData.endDate,
-      client_id: parseInt(projectData.clientId || projectData.client_id),
+      client_id: projectData.clientId ? parseInt(projectData.clientId) : 
+                 projectData.client_id ? parseInt(projectData.client_id) : null,
       Tags: projectData.Tags || ""
     };
 
@@ -141,15 +142,16 @@ export const updateProject = async (id, projectData) => {
       apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
     });
 
-    // Only include Updateable fields
+// Only include Updateable fields
     const recordData = {
       Id: parseInt(id),
       Name: projectData.name || projectData.Name,
       status: projectData.status,
-      budget: parseFloat(projectData.budget),
+      budget: projectData.budget ? parseFloat(projectData.budget) : 0,
       startDate: projectData.startDate,
       endDate: projectData.endDate,
-      client_id: parseInt(projectData.clientId || projectData.client_id),
+      client_id: projectData.clientId ? parseInt(projectData.clientId) : 
+                 projectData.client_id ? parseInt(projectData.client_id) : null,
       Tags: projectData.Tags || ""
     };
 

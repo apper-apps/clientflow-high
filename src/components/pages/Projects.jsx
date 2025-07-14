@@ -83,7 +83,7 @@ const handleProjectSubmit = async (projectData) => {
 
 const getClientName = (clientId) => {
     const client = clients.find(c => c.Id === clientId);
-    return client ? client.name : `Client ID: ${clientId}`;
+    return client ? client.Name : `Client ID: ${clientId}`;
   };
 
   const filteredProjects = projects.filter(project => {
@@ -226,7 +226,7 @@ actionLabel="Create Project"
                     {project.name}
                   </h3>
 <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {getClientName(project.clientId)}
+                    {getClientName(project.client_id)}
                   </p>
                 </div>
                 

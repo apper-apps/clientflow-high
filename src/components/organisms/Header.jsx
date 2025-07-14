@@ -5,7 +5,7 @@ import ThemeToggle from "@/components/molecules/ThemeToggle";
 import ApperIcon from "@/components/ApperIcon";
 import { useSidebar } from "@/hooks/useSidebar";
 import ProjectModal from "@/components/molecules/ProjectModal";
-import { AuthContext } from "../App";
+import { AuthContext } from "@/App";
 
 const Header = () => {
 const { toggleSidebar } = useSidebar();

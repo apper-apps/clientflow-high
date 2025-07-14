@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import KanbanBoard from "@/components/organisms/KanbanBoard";
+import TaskModal from "@/components/molecules/TaskModal";
 import ApperIcon from "@/components/ApperIcon";
+import KanbanBoard from "@/components/organisms/KanbanBoard";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
 import Card from "@/components/atoms/Card";
@@ -10,8 +11,8 @@ import Empty from "@/components/ui/Empty";
 import Error from "@/components/ui/Error";
 import Loading from "@/components/ui/Loading";
 import SearchBar from "@/components/molecules/SearchBar";
-import { getAllTasks } from "@/services/api/taskService";
 import { startTimer, stopTimer } from "@/services/api/timeTrackingService";
+import { getAllTasks } from "@/services/api/taskService";
 
 const Tasks = () => {
 const [tasks, setTasks] = useState([]);
@@ -21,8 +22,11 @@ const [tasks, setTasks] = useState([]);
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [viewMode, setViewMode] = useState("list");
-  const [activeTimers, setActiveTimers] = useState(new Map());
+const [activeTimers, setActiveTimers] = useState(new Map());
   const [currentTime, setCurrentTime] = useState(Date.now());
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [taskModalLoading, setTaskModalLoading] = useState(false);
+  
   const loadTasks = async () => {
     try {
       setLoading(true);
@@ -86,6 +90,19 @@ const [tasks, setTasks] = useState([]);
       toast.success("Timer stopped");
     } catch (error) {
       toast.error("Failed to stop timer");
+    }
+};
+
+  const handleCreateTask = async () => {
+    setShowTaskModal(true);
+  };
+
+  const handleTaskCreated = async () => {
+    setTaskModalLoading(true);
+    try {
+      await loadTasks();
+    } finally {
+      setTaskModalLoading(false);
     }
   };
 
@@ -215,9 +232,9 @@ const getStatusIcon = (status) => {
               Kanban
             </Button>
 </div>
-          <Button 
+<Button 
             variant="primary"
-            onClick={() => toast.info("Task creation will be available soon. For now, tasks are managed through projects.")}
+            onClick={handleCreateTask}
           >
             <ApperIcon name="Plus" size={16} className="mr-2" />
             Add Task
@@ -437,7 +454,13 @@ const getStatusIcon = (status) => {
             </motion.div>
 )}
         </>
-      )}
+)}
+      
+      <TaskModal
+        isOpen={showTaskModal}
+        onClose={() => setShowTaskModal(false)}
+        onTaskCreated={handleTaskCreated}
+      />
     </div>
   );
 };
